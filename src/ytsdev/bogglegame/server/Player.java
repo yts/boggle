@@ -7,11 +7,11 @@ import java.util.*;
 
 /**
  * The Player class is used for the server to represent and interact with a boggle player.
+ *
  * @author Y. Stitzer
- * version 6/2/2013
+ *         version 6/2/2013
  */
-public class Player
-{
+public class Player {
     private Scanner in;
     private PrintWriter out;
 
@@ -23,11 +23,11 @@ public class Player
 
     /**
      * Constructs a Player object with the socket to interact with
+     *
      * @param socket the player's socket
      * @throws IOException
      */
-    public Player(Socket socket, int players) throws IOException
-    {
+    public Player(Socket socket, int players) throws IOException {
         in = new Scanner(socket.getInputStream());
         out = new PrintWriter(socket.getOutputStream());
 
@@ -43,28 +43,28 @@ public class Player
 
     /**
      * Gets the name of the player
+     *
      * @return the name
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     /**
      * Gets the points earned by the player so far
+     *
      * @return the points
      */
-    public int getPoints()
-    {
+    public int getPoints() {
         return points;
     }
 
     /**
      * Tells the player client to start a new round with a given board
+     *
      * @param board the boggle board to use
      */
-    public void newRound(String board)
-    {
+    public void newRound(String board) {
         words.clear();
         removed.clear();
 
@@ -77,67 +77,39 @@ public class Player
     /**
      * Gets the words from the client
      */
-    public void retrieveWords()
-    {
+    public void retrieveWords() {
         int size = in.nextInt();
-        for(int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             words.add(in.next());
         }
     }
 
     /**
-     * Removes the words found by this player if another player also found it
-     * @param players the array of other Players playing this game
-     * @param start the index to start checking from. No reason to check players which already checked this one.
-     */
-    public void removeDuplicates(Player[] players, int start)
-    {
-        for(int i = start; i < players.length; i++)
-        {
-            Iterator<String> iter = words.iterator();
-            while(iter.hasNext())
-            {
-                String word = iter.next();
-                if(players[i].remove(word)) //other player has this word
-                {
-                    removed.add(word); //keep track of removed words
-                    iter.remove();
-                }
-            }
-        }
-    }
-
-    /**
      * Removes a word from this Player
+     *
      * @param word the word to remove if this player has it
      * @return true if this player had it and it was removed, false if the player doesn't have it
      */
-    public boolean remove(String word)
-    {
-        if(words.remove(word))
-        {
+    public boolean remove(String word) {
+        if (words.remove(word)) {
             removed.add(word);
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
     /**
      * Sends the results of the games to the player
+     *
      * @param results the names and points of the other players
      */
-    public void sendResults(String results)
-    {
+    public void sendResults(String results) {
         String message = "";
 
         message += removed.size();
 
-        for(String word : removed)
-        {
+        for (String word : removed) {
             message += " " + word;
         }
 
@@ -150,39 +122,40 @@ public class Player
     /**
      * Calculates how many points should be added to this player for this round, and adds them
      */
-    public void calculatePoints()
-    {
+    public void calculatePoints() {
         final int FIRST_REWARD = 1;
         final int SECOND_REWARD = 2;
         final int THIRD_REWARD = 3;
         final int FOURTH_REWARD = 5;
         final int FIFTH_REWARD = 11;
 
-        for(String word : words)
-        {
+        for (String word : words) {
             int length = word.length();
-            if(length <= 4){points += FIRST_REWARD;}
-            else if(length == 5){points += SECOND_REWARD;}
-            else if(length == 6){points += THIRD_REWARD;}
-            else if(length == 7){points += FOURTH_REWARD;}
-            else {points += FIFTH_REWARD;}
+            if (length <= 4) {
+                points += FIRST_REWARD;
+            } else if (length == 5) {
+                points += SECOND_REWARD;
+            } else if (length == 6) {
+                points += THIRD_REWARD;
+            } else if (length == 7) {
+                points += FOURTH_REWARD;
+            } else {
+                points += FIFTH_REWARD;
+            }
         }
 
     }
 
     /**
      * See if this player would like a new round
+     *
      * @return true if this player wants to play again, false if not
      */
-    public boolean confirmNew()
-    {
+    public boolean confirmNew() {
         String response = in.next();
-        if(response.equals("AGAIN"))
-        {
+        if (response.equals("AGAIN")) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -190,8 +163,7 @@ public class Player
     /**
      * Tell the client no more games to be played
      */
-    public void gameOver()
-    {
+    public void gameOver() {
         out.println("DONE");
         out.flush();
 
@@ -199,4 +171,29 @@ public class Player
         in.close();
     }
 
+    /**
+     * Takes a set of words for which no players should be awarded points and removes them.
+     *
+     * @param duplicateWords the words submitted by at least two players
+     */
+    public void removeWords(Set<String> duplicateWords) {
+        for (String word : duplicateWords) {
+            if (words.remove(word)) {
+                removed.add(word);
+            }
+        }
+    }
+
+    /**
+     * Get a copy of the all the words guessed by the user
+     *
+     * @return the guessed words
+     */
+    public Set<String> getWords() {
+        Set<String> allWords = new HashSet<>();
+        allWords.addAll(words);
+        allWords.addAll(removed);
+
+        return allWords;
+    }
 }
