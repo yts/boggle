@@ -22,7 +22,7 @@ public class BoggleThread implements Runnable {
      * Constructs a new BoggleThread object with the sockets of the connected players
      *
      * @param sockets the players' sockets
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public BoggleThread(Socket[] sockets) throws IOException {
         players = new Player[sockets.length];

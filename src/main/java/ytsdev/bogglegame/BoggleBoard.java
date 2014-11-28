@@ -23,7 +23,7 @@ public class BoggleBoard {
     /**
      * Creates an empty boggle board
      *
-     * @throws FileNotFoundException
+     * @throws java.io.FileNotFoundException
      */
     public BoggleBoard() throws FileNotFoundException {
         board = new char[SIZE][SIZE];
@@ -34,7 +34,7 @@ public class BoggleBoard {
      * Creates a new boggle board with cubes using the the filename containing the cubes' values
      *
      * @param cubesFile the filename of the text file with the cubes
-     * @throws FileNotFoundException
+     * @throws java.io.FileNotFoundException
      */
     public BoggleBoard(String cubesFile) throws FileNotFoundException {
         cubes = getCubes(cubesFile);
@@ -60,7 +60,7 @@ public class BoggleBoard {
      *
      * @param filename the name of the file containing the cubes' values
      * @return the 2d array with the cubes
-     * @throws FileNotFoundException
+     * @throws java.io.FileNotFoundException
      */
     private char[][] getCubes(String filename) throws FileNotFoundException {
 

@@ -25,7 +25,7 @@ public class Player {
      * Constructs a Player object with the socket to interact with
      *
      * @param socket the player's socket
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public Player(Socket socket, int players) throws IOException {
         in = new Scanner(socket.getInputStream());
